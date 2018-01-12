@@ -2,8 +2,11 @@
 #
 # Provides simple targets to download and maintain /usr/src, /usr/dports etc.
 
-GITHOST?=git.dragonflybsd.org
-GITHOST_DPORTS?=mirror-master.dragonflybsd.org
+# DragonFlyBSD sources  
+GITURL?=git://git.dragonflybsd.org/dragonfly.git
+
+# DPorts sources 
+GITURL_DPORTS?=git://mirror-master.dragonflybsd.org/dports.git
 
 DPTBALL=/tmp/dports.tar.gz
 PKGBALL=/tmp/pkgboot.tar.xz
@@ -71,7 +74,7 @@ src-create-repo: src-check
 	@mkdir -p ${.CURDIR}/src
 	@cd ${.CURDIR}/src && git init
 	@cd ${.CURDIR}/src && \
-		git remote add origin git://${GITHOST}/dragonfly.git
+		git remote add origin ${GITURL}
 	cd ${.CURDIR}/src && git fetch origin
 	cd ${.CURDIR}/src && git branch master origin/master
 
@@ -85,7 +88,7 @@ src-create-shallow: src-check
 	@mkdir -p ${.CURDIR}/src
 	cd ${.CURDIR}/src && git init
 	cd ${.CURDIR}/src && \
-	    git remote add origin git://${GITHOST}/dragonfly.git
+	    git remote add origin ${GITURL}
 	cd ${.CURDIR}/src && git fetch --depth=1 origin
 	cd ${.CURDIR}/src && git branch master origin/master
 	cd ${.CURDIR}/src && git checkout master
@@ -120,7 +123,7 @@ dports-update: dports-check-hasdir
 dports-create: dports-check
 	@echo "If problems occur you may have to rm -rf dports and try again."
 	@echo
-	git clone git://${GITHOST_DPORTS}/dports.git ${.CURDIR}/dports
+	git clone ${GITURL_DPORTS} ${.CURDIR}/dports
 .if exists(${.CURDIR}/pkg)
 	@echo ${WSTARS}
 	@echo ${WARNPS}
@@ -130,7 +133,7 @@ dports-create: dports-check
 dports-create-shallow: dports-check
 	@echo "If problems occur you may have to rm -rf dports and try again."
 	@echo
-	git clone --depth=1 git://${GITHOST_DPORTS}/dports.git \
+	git clone --depth=1 ${GITURL_DPORTS} \
 	   ${.CURDIR}/dports
 .if exists(${.CURDIR}/pkg)
 	@echo ${WSTARS}
